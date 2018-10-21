@@ -942,13 +942,19 @@ function (_Component) {
     key: "calculateMinimumGasBar",
     value: function calculateMinimumGasBar() {
       this.barNeeded = {
-        d12: Math.ceil(this.litersNeeded / 24),
-        s12: Math.ceil(this.litersNeeded / 12),
-        d11: Math.ceil(this.litersNeeded / 22),
-        s11: Math.ceil(this.litersNeeded / 11),
-        d10: Math.ceil(this.litersNeeded / 20),
-        s10: Math.ceil(this.litersNeeded / 10)
+        d12: this.getMinBar(24),
+        s12: this.getMinBar(12),
+        d11: this.getMinBar(22),
+        s11: this.getMinBar(11),
+        d10: this.getMinBar(20),
+        s10: this.getMinBar(10)
       };
+    }
+  }, {
+    key: "getMinBar",
+    value: function getMinBar(cylinderLitres) {
+      var minimumBars = Math.ceil(this.litersNeeded / cylinderLitres);
+      return minimumBars > 40 ? minimumBars : 40; //Minimum Gas can NEVER be less than 40 BAR due to the possible SPG inaccuracy at the lower ranges
     }
   }, {
     key: "render",
@@ -1169,7 +1175,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52734" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62798" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

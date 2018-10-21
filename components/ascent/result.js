@@ -67,13 +67,18 @@ export default class Result extends Component {
 
   calculateMinimumGasBar() {
     this.barNeeded = {
-      d12: Math.ceil(this.litersNeeded / 24),
-      s12: Math.ceil(this.litersNeeded / 12),
-      d11: Math.ceil(this.litersNeeded / 22),
-      s11: Math.ceil(this.litersNeeded / 11),
-      d10: Math.ceil(this.litersNeeded / 20),
-      s10: Math.ceil(this.litersNeeded / 10)
+      d12: this.getMinBar(24),
+      s12: this.getMinBar(12),
+      d11: this.getMinBar(22),
+      s11: this.getMinBar(11),
+      d10: this.getMinBar(20),
+      s10: this.getMinBar(10)
     };
+  }
+
+  getMinBar(cylinderLitres) {
+    const minimumBars = Math.ceil(this.litersNeeded / cylinderLitres);
+    return minimumBars > 40 ? minimumBars : 40; //Minimum Gas can NEVER be less than 40 BAR due to the possible SPG inaccuracy at the lower ranges
   }
 
   render() {
