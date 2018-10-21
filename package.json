@@ -1,0 +1,26 @@
+{
+  "name": "gue_calculator",
+  "version": "1.0.0",
+  "description": "GUE Dive planner",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel --public-url /gue index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/persyl/gue_calculator.git"
+  },
+  "author": "Per Lundkvist",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/persyl/gue_calculator/issues"
+  },
+  "homepage": "https://github.com/persyl/gue_calculator#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.10.3"
+  },
+  "dependencies": {
+    "preact": "^8.3.1"
+  }
+}
