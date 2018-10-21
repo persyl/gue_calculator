@@ -1,2 +1,2 @@
-# gue_calculator
-Application to calculate GUE dive planning
+# GUE Calculator
+Application to do calculations for GUE diving
