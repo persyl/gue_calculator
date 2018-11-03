@@ -893,7 +893,7 @@ function (_Component) {
     value: function calculate(props) {
       this.calculateAscentTime(props);
       this.calculateMinimumGasLiters(props);
-      this.calculateMinimumGasBar();
+      this.calculateGas();
     }
   }, {
     key: "calculateAscentTime",
@@ -939,15 +939,40 @@ function (_Component) {
       this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
     }
   }, {
-    key: "calculateMinimumGasBar",
-    value: function calculateMinimumGasBar() {
-      this.barNeeded = {
-        d12: this.getMinBar(24),
-        s12: this.getMinBar(12),
-        d11: this.getMinBar(22),
-        s11: this.getMinBar(11),
-        d10: this.getMinBar(20),
-        s10: this.getMinBar(10)
+    key: "calculateGas",
+    value: function calculateGas() {
+      var cylinderBarCapacity = this.props.cylinderBarCapacity;
+      var d12 = this.getMinBar(24);
+      var s12 = this.getMinBar(12);
+      var d11 = this.getMinBar(22);
+      var s11 = this.getMinBar(11);
+      var d10 = this.getMinBar(20);
+      var s10 = this.getMinBar(10);
+      this.minimumBarNeeded = {
+        d12: {
+          minBar: d12,
+          usableGas: cylinderBarCapacity - d12
+        },
+        s12: {
+          minBar: s12,
+          usableGas: cylinderBarCapacity - s12
+        },
+        d11: {
+          minBar: d11,
+          usableGas: cylinderBarCapacity - d11
+        },
+        s11: {
+          minBar: s11,
+          usableGas: cylinderBarCapacity - s11
+        },
+        d10: {
+          minBar: d10,
+          usableGas: cylinderBarCapacity - d10
+        },
+        s10: {
+          minBar: s10,
+          usableGas: cylinderBarCapacity - s10
+        }
       };
     }
   }, {
@@ -962,23 +987,37 @@ function (_Component) {
       if (typeof this.props.maxDepth !== "number" || this.props.maxDepth < 1) return null;
       return (0, _preact.h)("div", {
         style: style.container
-      }, (0, _preact.h)("h2", null, "Ascent time"), (0, _preact.h)("p", {
+      }, (0, _preact.h)("p", {
         style: style.text
-      }, "From ", this.props.maxDepth, "m = ", this.totalAscentTime, " minutes"), (0, _preact.h)("h2", null, "Minimum gas enough for ", this.amountOfDivers, " divers"), (0, _preact.h)("p", {
+      }, "Ascent time from", (0, _preact.h)("strong", null, this.props.maxDepth, "m = ", this.totalAscentTime, " minutes")), (0, _preact.h)("p", {
         style: style.text
-      }, this.litersNeeded, " L total gas."), (0, _preact.h)("p", {
+      }, (0, _preact.h)("strong", null, this.litersNeeded, " L"), " minimum gas needed."), (0, _preact.h)("h2", {
+        style: style.h2
+      }, "Double 12L cylinders:"), this.renderMinGasText(this.minimumBarNeeded.d12.minBar), this.renderUsableGasText(this.minimumBarNeeded.d12.usableGas), (0, _preact.h)("h2", {
+        style: style.h2
+      }, "Single 12L cylinder:"), this.renderMinGasText(this.minimumBarNeeded.s12.minBar), this.renderUsableGasText(this.minimumBarNeeded.s12.usableGas), (0, _preact.h)("h2", {
+        style: style.h2
+      }, "Double 11L cylinders:"), this.renderMinGasText(this.minimumBarNeeded.d11.minBar), this.renderUsableGasText(this.minimumBarNeeded.d11.usableGas), (0, _preact.h)("h2", {
+        style: style.h2
+      }, "Single 11L cylinder:"), this.renderMinGasText(this.minimumBarNeeded.s11.minBar), this.renderUsableGasText(this.minimumBarNeeded.s11.usableGas), (0, _preact.h)("h2", {
+        style: style.h2
+      }, "Double 10L cylinders:"), this.renderMinGasText(this.minimumBarNeeded.d10.minBar), this.renderUsableGasText(this.minimumBarNeeded.d10.usableGas), (0, _preact.h)("h2", {
+        style: style.h2
+      }, "Single 10L cylinder:"), this.renderMinGasText(this.minimumBarNeeded.s10.minBar), this.renderUsableGasText(this.minimumBarNeeded.s10.usableGas));
+    }
+  }, {
+    key: "renderMinGasText",
+    value: function renderMinGasText(minBarValue) {
+      return (0, _preact.h)("p", {
         style: style.text
-      }, "Double 12L cylinders: ", this.barNeeded.d12, " BAR"), (0, _preact.h)("p", {
+      }, "Minimum gas (for ", this.amountOfDivers, " divers):", (0, _preact.h)("strong", null, minBarValue, " BAR"));
+    }
+  }, {
+    key: "renderUsableGasText",
+    value: function renderUsableGasText(usableGasValue) {
+      return (0, _preact.h)("p", {
         style: style.text
-      }, "Single 12L cylinder: ", this.barNeeded.s12, " BAR"), (0, _preact.h)("p", {
-        style: style.text
-      }, "Double 11L cylinders: ", this.barNeeded.d11, " BAR"), (0, _preact.h)("p", {
-        style: style.text
-      }, "Single 11L cylinder: ", this.barNeeded.s11, " BAR"), (0, _preact.h)("p", {
-        style: style.text
-      }, "Double 10L cylinders: ", this.barNeeded.d10, " BAR"), (0, _preact.h)("p", {
-        style: style.text
-      }, "Single 10L cylinder: ", this.barNeeded.s10, " BAR"));
+      }, "Usable gas :", (0, _preact.h)("strong", null, usableGasValue, " BAR"));
     }
   }]);
 
@@ -992,9 +1031,15 @@ var style = {
     padding: "10px",
     borderRadius: "10px"
   },
+  h2: {
+    fontSize: "22px",
+    fontFamily: "Arial",
+    marginBottom: "0"
+  },
   text: {
     fontSize: "18px",
-    fontFamily: "Arial"
+    fontFamily: "Arial",
+    margin: "0 0 2px 0"
   }
 };
 },{"preact":"node_modules/preact/dist/preact.mjs"}],"components/ascent/ascent.js":[function(require,module,exports) {
@@ -1041,9 +1086,11 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ascent).call(this, props));
     _this.state = {
-      maxDepth: 0
+      maxDepth: 0,
+      cylinderBarCapacity: 200
     };
     _this.onDepthChange = _this.onDepthChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.onCylinderBarCapacityChange = _this.onCylinderBarCapacityChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
@@ -1062,11 +1109,25 @@ function (_Component) {
       });
     }
   }, {
+    key: "onCylinderBarCapacityChange",
+    value: function onCylinderBarCapacityChange(event) {
+      var parsedInput = 0;
+
+      try {
+        parsedInput = parseInt(event.target.value);
+      } catch (e) {//Ignore
+      }
+
+      this.setState({
+        cylinderBarCapacity: parsedInput
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       return (0, _preact.h)("div", {
         style: style.container
-      }, (0, _preact.h)("h1", null, "Ascent calculator"), (0, _preact.h)("input", {
+      }, (0, _preact.h)("h1", null, "Ascent calculator - EAN32"), (0, _preact.h)("input", {
         style: style.input,
         type: "number",
         min: "0",
@@ -1074,8 +1135,17 @@ function (_Component) {
         value: this.state.maxDepth,
         placeholder: "Max depth metres?",
         onKeyUp: this.onDepthChange
+      }), (0, _preact.h)("input", {
+        style: style.input,
+        type: "number",
+        min: "0",
+        max: "300",
+        value: this.state.cylinderBarCapacity,
+        placeholder: "Cylinder bar capacity?",
+        onKeyUp: this.onCylinderBarCapacityChange
       }), (0, _preact.h)(_result.default, {
-        maxDepth: this.state.maxDepth
+        maxDepth: this.state.maxDepth,
+        cylinderBarCapacity: this.state.cylinderBarCapacity
       }));
     }
   }]);
@@ -1175,7 +1245,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62798" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50158" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
