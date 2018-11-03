@@ -20,7 +20,7 @@ export default class Result extends Component {
   calculate(props) {
     this.calculateAscentTime(props);
     this.calculateMinimumGasLiters(props);
-    this.calculateMinimumGasBar();
+    this.calculateGas();
   }
 
   calculateAscentTime(props) {
@@ -65,14 +65,40 @@ export default class Result extends Component {
     this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
   }
 
-  calculateMinimumGasBar() {
-    this.barNeeded = {
-      d12: this.getMinBar(24),
-      s12: this.getMinBar(12),
-      d11: this.getMinBar(22),
-      s11: this.getMinBar(11),
-      d10: this.getMinBar(20),
-      s10: this.getMinBar(10)
+  calculateGas() {
+    const { cylinderBarCapacity } = this.props;
+    const d12 = this.getMinBar(24);
+    const s12 = this.getMinBar(12);
+    const d11 = this.getMinBar(22);
+    const s11 = this.getMinBar(11);
+    const d10 = this.getMinBar(20);
+    const s10 = this.getMinBar(10);
+
+    this.minimumBarNeeded = {
+      d12: {
+        minBar: d12,
+        usableGas: cylinderBarCapacity - d12
+      },
+      s12: {
+        minBar: s12,
+        usableGas: cylinderBarCapacity - s12
+      },
+      d11: {
+        minBar: d11,
+        usableGas: cylinderBarCapacity - d11
+      },
+      s11: {
+        minBar: s11,
+        usableGas: cylinderBarCapacity - s11
+      },
+      d10: {
+        minBar: d10,
+        usableGas: cylinderBarCapacity - d10
+      },
+      s10: {
+        minBar: s10,
+        usableGas: cylinderBarCapacity - s10
+      }
     };
   }
 
@@ -87,19 +113,56 @@ export default class Result extends Component {
 
     return (
       <div style={style.container}>
-        <h2>Ascent time</h2>
         <p style={style.text}>
-          From {this.props.maxDepth}m = {this.totalAscentTime} minutes
+          Ascent time from
+          <strong>
+            {this.props.maxDepth}m = {this.totalAscentTime} minutes
+          </strong>
         </p>
-        <h2>Minimum gas enough for {this.amountOfDivers} divers</h2>
-        <p style={style.text}>{this.litersNeeded} L total gas.</p>
-        <p style={style.text}>Double 12L cylinders: {this.barNeeded.d12} BAR</p>
-        <p style={style.text}>Single 12L cylinder: {this.barNeeded.s12} BAR</p>
-        <p style={style.text}>Double 11L cylinders: {this.barNeeded.d11} BAR</p>
-        <p style={style.text}>Single 11L cylinder: {this.barNeeded.s11} BAR</p>
-        <p style={style.text}>Double 10L cylinders: {this.barNeeded.d10} BAR</p>
-        <p style={style.text}>Single 10L cylinder: {this.barNeeded.s10} BAR</p>
+        <p style={style.text}>
+          <strong>{this.litersNeeded} L</strong> minimum gas needed.
+        </p>
+        <h2 style={style.h2}>Double 12L cylinders:</h2>
+        {this.renderMinGasText(this.minimumBarNeeded.d12.minBar)}
+        {this.renderUsableGasText(this.minimumBarNeeded.d12.usableGas)}
+
+        <h2 style={style.h2}>Single 12L cylinder:</h2>
+        {this.renderMinGasText(this.minimumBarNeeded.s12.minBar)}
+        {this.renderUsableGasText(this.minimumBarNeeded.s12.usableGas)}
+
+        <h2 style={style.h2}>Double 11L cylinders:</h2>
+        {this.renderMinGasText(this.minimumBarNeeded.d11.minBar)}
+        {this.renderUsableGasText(this.minimumBarNeeded.d11.usableGas)}
+
+        <h2 style={style.h2}>Single 11L cylinder:</h2>
+        {this.renderMinGasText(this.minimumBarNeeded.s11.minBar)}
+        {this.renderUsableGasText(this.minimumBarNeeded.s11.usableGas)}
+
+        <h2 style={style.h2}>Double 10L cylinders:</h2>
+        {this.renderMinGasText(this.minimumBarNeeded.d10.minBar)}
+        {this.renderUsableGasText(this.minimumBarNeeded.d10.usableGas)}
+
+        <h2 style={style.h2}>Single 10L cylinder:</h2>
+        {this.renderMinGasText(this.minimumBarNeeded.s10.minBar)}
+        {this.renderUsableGasText(this.minimumBarNeeded.s10.usableGas)}
       </div>
+    );
+  }
+
+  renderMinGasText(minBarValue) {
+    return (
+      <p style={style.text}>
+        Minimum gas (for {this.amountOfDivers} divers):
+        <strong>{minBarValue} BAR</strong>
+      </p>
+    );
+  }
+
+  renderUsableGasText(usableGasValue) {
+    return (
+      <p style={style.text}>
+        Usable gas :<strong>{usableGasValue} BAR</strong>
+      </p>
     );
   }
 }
@@ -110,8 +173,14 @@ const style = {
     padding: "10px",
     borderRadius: "10px"
   },
+  h2: {
+    fontSize: "22px",
+    fontFamily: "Arial",
+    marginBottom: "0"
+  },
   text: {
     fontSize: "18px",
-    fontFamily: "Arial"
+    fontFamily: "Arial",
+    margin: "0 0 2px 0"
   }
 };
