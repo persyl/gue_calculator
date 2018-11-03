@@ -6,8 +6,12 @@ import GlobalStyles from "../typography/typography";
 export default class Ascent extends Component {
   constructor(props) {
     super(props);
+    const partialPressure = 1.4;
+    this.gasMix = 0.32;
+    this.allowedMaxDepth = Math.floor((partialPressure / this.gasMix - 1) * 10);
     this.state = {
       maxDepth: 0,
+      tooDeep: false,
       cylinderBarCapacity: 200,
       gasStrategy: GasStrategy.AllAvailable
     };
@@ -25,7 +29,10 @@ export default class Ascent extends Component {
     } catch (e) {
       parsedInput = 0;
     }
-    this.setState({ maxDepth: parsedInput });
+    this.setState({
+      maxDepth: parsedInput,
+      tooDeep: parsedInput >= this.allowedMaxDepth
+    });
   }
 
   onCylinderBarCapacityChange(event) {
@@ -46,7 +53,10 @@ export default class Ascent extends Component {
     return (
       <div style={style.container}>
         <h1 style={GlobalStyles.h1}>GUE dive calculator</h1>
-        <h2 style={GlobalStyles.h2}>EAN32</h2>
+        <h2 style={GlobalStyles.h2}>
+          EAN
+          {this.gasMix * 100}
+        </h2>
         <div style={style.warning}>
           This tool is just meant to be used as a guideline and takes no
           responsibility for your dive. Always make your own personal
@@ -84,6 +94,7 @@ export default class Ascent extends Component {
         {this.renderWarning()}
         <Result
           maxDepth={this.state.maxDepth}
+          tooDeep={this.state.tooDeep}
           cylinderBarCapacity={this.state.cylinderBarCapacity}
           gasStrategy={this.state.gasStrategy}
         />
@@ -92,14 +103,19 @@ export default class Ascent extends Component {
   }
 
   renderWarning() {
+    const depthWarningText = `WARNING! To deep for EAN${this.gasMix * 100}`;
+    const depthWarning =
+      this.state.maxDepth >= this.allowedMaxDepth ? (
+        <strong>{depthWarningText}</strong>
+      ) : null;
     return this.state.gasStrategy === GasStrategy.RuleOfThird ? (
       <div style={style.warning}>
-        * GUE Recreational Level 1 divers should always REFRAIN from planning
-        and conducting any dive that requires using the ‘one‐third of usable gas
-        strategy
+        {depthWarning}* GUE Recreational Level 1 divers should always REFRAIN
+        from planning and conducting any dive that requires using the ‘one‐third
+        of usable gas strategy
       </div>
     ) : (
-      ""
+      <div style={style.warning}>{depthWarning}</div>
     );
   }
 }
