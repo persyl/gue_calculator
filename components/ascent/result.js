@@ -1,5 +1,6 @@
 import { h, Component } from "preact";
 import GasStrategy from "./gas-strategy";
+import GlobalStyles from "../typography/typography";
 
 export default class Result extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class Result extends Component {
   calculate(props) {
     this.calculateAscentTime(props);
     this.calculateMinimumGasLiters(props);
-    this.calculateGas();
+    this.calculateGas(props);
   }
 
   calculateAscentTime(props) {
@@ -66,8 +67,7 @@ export default class Result extends Component {
     this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
   }
 
-  calculateGas() {
-    const { cylinderBarCapacity } = this.props;
+  calculateGas(props) {
     const d12 = this.getMinBar(24);
     const s12 = this.getMinBar(12);
     const d11 = this.getMinBar(22);
@@ -78,27 +78,27 @@ export default class Result extends Component {
     this.minimumBarNeeded = {
       d12: {
         minBar: d12,
-        usableGas: cylinderBarCapacity - d12
+        usableGas: this.getUsableBar(props, d12)
       },
       s12: {
         minBar: s12,
-        usableGas: cylinderBarCapacity - s12
+        usableGas: this.getUsableBar(props, s12)
       },
       d11: {
         minBar: d11,
-        usableGas: cylinderBarCapacity - d11
+        usableGas: this.getUsableBar(props, d11)
       },
       s11: {
         minBar: s11,
-        usableGas: cylinderBarCapacity - s11
+        usableGas: this.getUsableBar(props, s11)
       },
       d10: {
         minBar: d10,
-        usableGas: cylinderBarCapacity - d10
+        usableGas: this.getUsableBar(props, d10)
       },
       s10: {
         minBar: s10,
-        usableGas: cylinderBarCapacity - s10
+        usableGas: this.getUsableBar(props, s10)
       }
     };
   }
@@ -108,42 +108,52 @@ export default class Result extends Component {
     return minimumBars > 40 ? minimumBars : 40; //Minimum Gas can NEVER be less than 40 BAR due to the possible SPG inaccuracy at the lower ranges
   }
 
+  getUsableBar(props, minBar) {
+    const ug = props.cylinderBarCapacity - minBar;
+    return ug > minBar ? ug : 0;
+  }
+
   render() {
-    if (typeof this.props.maxDepth !== "number" || this.props.maxDepth < 1)
+    if (
+      typeof this.props.maxDepth !== "number" ||
+      this.props.maxDepth < 1 ||
+      typeof this.props.cylinderBarCapacity !== "number" ||
+      this.props.cylinderBarCapacity < 1
+    )
       return null;
 
     return (
       <div style={style.container}>
-        <p style={style.text}>
-          Ascent time from
+        <p style={GlobalStyles.text}>
+          Ascent time from&nbsp;
           <strong>
             {this.props.maxDepth}m = {this.totalAscentTime} minutes
           </strong>
         </p>
-        <p style={style.text}>
+        <p style={GlobalStyles.text}>
           <strong>{this.litersNeeded} L</strong> minimum gas needed.
         </p>
-        <h2 style={style.h2}>Double 12L cylinders:</h2>
+        <h2 style={GlobalStyles.h2}>Double 12L cylinders:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.d12.minBar)}
         {this.renderUsableGasText(this.minimumBarNeeded.d12.usableGas)}
 
-        <h2 style={style.h2}>Single 12L cylinder:</h2>
+        <h2 style={GlobalStyles.h2}>Single 12L cylinder:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.s12.minBar)}
         {this.renderUsableGasText(this.minimumBarNeeded.s12.usableGas)}
 
-        <h2 style={style.h2}>Double 11L cylinders:</h2>
+        <h2 style={GlobalStyles.h2}>Double 11L cylinders:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.d11.minBar)}
         {this.renderUsableGasText(this.minimumBarNeeded.d11.usableGas)}
 
-        <h2 style={style.h2}>Single 11L cylinder:</h2>
+        <h2 style={GlobalStyles.h2}>Single 11L cylinder:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.s11.minBar)}
         {this.renderUsableGasText(this.minimumBarNeeded.s11.usableGas)}
 
-        <h2 style={style.h2}>Double 10L cylinders:</h2>
+        <h2 style={GlobalStyles.h2}>Double 10L cylinders:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.d10.minBar)}
         {this.renderUsableGasText(this.minimumBarNeeded.d10.usableGas)}
 
-        <h2 style={style.h2}>Single 10L cylinder:</h2>
+        <h2 style={GlobalStyles.h2}>Single 10L cylinder:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.s10.minBar)}
         {this.renderUsableGasText(this.minimumBarNeeded.s10.usableGas)}
       </div>
@@ -152,8 +162,8 @@ export default class Result extends Component {
 
   renderMinGasText(minBarValue) {
     return (
-      <p style={style.text}>
-        Minimum gas (for {this.amountOfDivers} divers):
+      <p style={GlobalStyles.text}>
+        Minimum gas (for {this.amountOfDivers} divers):&nbsp;
         <strong>{minBarValue} BAR</strong>
       </p>
     );
@@ -162,8 +172,9 @@ export default class Result extends Component {
   renderUsableGasText(usableGasValue) {
     if (this.props.gasStrategy === GasStrategy.AllAvailable) {
       return (
-        <p style={style.text}>
-          Usable gas ({this.props.gasStrategy}) :
+        <p style={GlobalStyles.text}>
+          Usable gas ({this.props.gasStrategy}
+          ):&nbsp;
           <strong>{usableGasValue} BAR</strong>
         </p>
       );
@@ -172,8 +183,9 @@ export default class Result extends Component {
       const modifiedUsableGas = Math.floor(usableGasValue / 2);
       const turnPressure = this.props.cylinderBarCapacity - modifiedUsableGas;
       return (
-        <p style={style.text}>
-          Usable gas ({this.props.gasStrategy}) :
+        <p style={GlobalStyles.text}>
+          Usable gas ({this.props.gasStrategy}
+          ):&nbsp;
           <strong>{usableGasValue} BAR</strong>
           <br />
           Turn pressure: {turnPressure}
@@ -184,8 +196,9 @@ export default class Result extends Component {
       const modifiedUsableGas = Math.floor(usableGasValue / 3);
       const turnPressure = this.props.cylinderBarCapacity - modifiedUsableGas;
       return (
-        <p style={style.text}>
-          Usable gas ({this.props.gasStrategy}) :
+        <p style={GlobalStyles.text}>
+          Usable gas ({this.props.gasStrategy}
+          ):&nbsp;
           <strong>{usableGasValue} BAR</strong>
           <br />
           Turn pressure: {turnPressure}
@@ -203,15 +216,5 @@ const style = {
     backgroundColor: "#08689b",
     padding: "10px",
     borderRadius: "10px"
-  },
-  h2: {
-    fontSize: "22px",
-    fontFamily: "Arial",
-    marginBottom: "0"
-  },
-  text: {
-    fontSize: "18px",
-    fontFamily: "Arial",
-    margin: "0 0 2px 0"
   }
 };
