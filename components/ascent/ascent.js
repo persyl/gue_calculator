@@ -111,7 +111,7 @@ export default class Ascent extends Component {
     return this.state.gasStrategy === GasStrategy.RuleOfThird ? (
       <div style={style.warning}>
         {depthWarning}* GUE Recreational Level 1 divers should always REFRAIN
-        from planning and conducting any dive that requires using the ‘one‐third
+        from planning and conducting any dive that requires using the one‐third
         of usable gas strategy
       </div>
     ) : (
