@@ -1039,7 +1039,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      if (typeof this.props.maxDepth !== "number" || this.props.maxDepth < 1 || typeof this.props.cylinderBarCapacity !== "number" || this.props.cylinderBarCapacity < 1) return null;
+      if (this.props.tooDeep || typeof this.props.maxDepth !== "number" || this.props.maxDepth < 1 || typeof this.props.cylinderBarCapacity !== "number" || this.props.cylinderBarCapacity < 1) return null;
       return (0, _preact.h)("div", {
         style: style.container
       }, (0, _preact.h)("p", {
@@ -1160,8 +1160,12 @@ function (_Component) {
     _classCallCheck(this, Ascent);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ascent).call(this, props));
+    var partialPressure = 1.4;
+    _this.gasMix = 0.32;
+    _this.allowedMaxDepth = Math.floor((partialPressure / _this.gasMix - 1) * 10);
     _this.state = {
       maxDepth: 0,
+      tooDeep: false,
       cylinderBarCapacity: 200,
       gasStrategy: _gasStrategy.default.AllAvailable
     };
@@ -1183,7 +1187,8 @@ function (_Component) {
       }
 
       this.setState({
-        maxDepth: parsedInput
+        maxDepth: parsedInput,
+        tooDeep: parsedInput >= this.allowedMaxDepth
       });
     }
   }, {
@@ -1217,7 +1222,7 @@ function (_Component) {
         style: _typography.default.h1
       }, "GUE dive calculator"), (0, _preact.h)("h2", {
         style: _typography.default.h2
-      }, "EAN32"), (0, _preact.h)("div", {
+      }, "EAN", this.gasMix * 100), (0, _preact.h)("div", {
         style: style.warning
       }, "This tool is just meant to be used as a guideline and takes no responsibility for your dive. Always make your own personal calculations!"), (0, _preact.h)("input", {
         style: style.input,
@@ -1243,6 +1248,7 @@ function (_Component) {
         value: _gasStrategy.default.RuleOfThird
       }, _gasStrategy.default.RuleOfThird, "*")), this.renderWarning(), (0, _preact.h)(_result.default, {
         maxDepth: this.state.maxDepth,
+        tooDeep: this.state.tooDeep,
         cylinderBarCapacity: this.state.cylinderBarCapacity,
         gasStrategy: this.state.gasStrategy
       }));
@@ -1250,9 +1256,13 @@ function (_Component) {
   }, {
     key: "renderWarning",
     value: function renderWarning() {
+      var depthWarningText = "WARNING! To deep for EAN".concat(this.gasMix * 100);
+      var depthWarning = this.state.maxDepth >= this.allowedMaxDepth ? (0, _preact.h)("strong", null, depthWarningText) : null;
       return this.state.gasStrategy === _gasStrategy.default.RuleOfThird ? (0, _preact.h)("div", {
         style: style.warning
-      }, "* GUE Recreational Level 1 divers should always REFRAIN from planning and conducting any dive that requires using the \u2018one\u2010third of usable gas strategy") : "";
+      }, depthWarning, "* GUE Recreational Level 1 divers should always REFRAIN from planning and conducting any dive that requires using the \u2018one\u2010third of usable gas strategy") : (0, _preact.h)("div", {
+        style: style.warning
+      }, depthWarning);
     }
   }]);
 
@@ -1364,7 +1374,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59720" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56213" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

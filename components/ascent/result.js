@@ -115,6 +115,7 @@ export default class Result extends Component {
 
   render() {
     if (
+      this.props.tooDeep ||
       typeof this.props.maxDepth !== "number" ||
       this.props.maxDepth < 1 ||
       typeof this.props.cylinderBarCapacity !== "number" ||
