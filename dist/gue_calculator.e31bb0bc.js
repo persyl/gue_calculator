@@ -830,6 +830,19 @@ var preact = {
 };
 var _default = preact;
 exports.default = _default;
+},{}],"components/ascent/gas-strategy.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  AllAvailable: "All Available",
+  RuleOfHalf: "Rule of Half",
+  RuleOfThird: "Rule of Third"
+};
+exports.default = _default;
 },{}],"components/ascent/result.js":[function(require,module,exports) {
 "use strict";
 
@@ -839,6 +852,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _preact = require("preact");
+
+var _gasStrategy = _interopRequireDefault(require("./gas-strategy"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -933,7 +950,7 @@ function (_Component) {
   }, {
     key: "calculateMinimumGasLiters",
     value: function calculateMinimumGasLiters(props) {
-      var averageDepthATA = Math.ceil(props.maxDepth / 2) / 10 + 1;
+      var averageDepthATA = Math.floor(props.maxDepth / 2) / 10 + 1;
       var scr = 40; //40L/min: to accommodate conservatism, and to account for the increased breathing rate from encountering an issue on the dive.
 
       this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
@@ -978,7 +995,7 @@ function (_Component) {
   }, {
     key: "getMinBar",
     value: function getMinBar(cylinderLitres) {
-      var minimumBars = Math.ceil(this.litersNeeded / cylinderLitres);
+      var minimumBars = Math.floor(this.litersNeeded / cylinderLitres);
       return minimumBars > 40 ? minimumBars : 40; //Minimum Gas can NEVER be less than 40 BAR due to the possible SPG inaccuracy at the lower ranges
     }
   }, {
@@ -1015,9 +1032,31 @@ function (_Component) {
   }, {
     key: "renderUsableGasText",
     value: function renderUsableGasText(usableGasValue) {
-      return (0, _preact.h)("p", {
-        style: style.text
-      }, "Usable gas :", (0, _preact.h)("strong", null, usableGasValue, " BAR"));
+      if (this.props.gasStrategy === _gasStrategy.default.AllAvailable) {
+        return (0, _preact.h)("p", {
+          style: style.text
+        }, "Usable gas (", this.props.gasStrategy, ") :", (0, _preact.h)("strong", null, usableGasValue, " BAR"));
+      }
+
+      if (this.props.gasStrategy === _gasStrategy.default.RuleOfHalf) {
+        var modifiedUsableGas = Math.floor(usableGasValue / 2);
+        var turnPressure = this.props.cylinderBarCapacity - modifiedUsableGas;
+        return (0, _preact.h)("p", {
+          style: style.text
+        }, "Usable gas (", this.props.gasStrategy, ") :", (0, _preact.h)("strong", null, usableGasValue, " BAR"), (0, _preact.h)("br", null), "Turn pressure: ", turnPressure);
+      }
+
+      if (this.props.gasStrategy === _gasStrategy.default.RuleOfThird) {
+        var _modifiedUsableGas = Math.floor(usableGasValue / 3);
+
+        var _turnPressure = this.props.cylinderBarCapacity - _modifiedUsableGas;
+
+        return (0, _preact.h)("p", {
+          style: style.text
+        }, "Usable gas (", this.props.gasStrategy, ") :", (0, _preact.h)("strong", null, usableGasValue, " BAR"), (0, _preact.h)("br", null), "Turn pressure: ", _turnPressure, (0, _preact.h)("br", null), "Emergency gas: ", _modifiedUsableGas);
+      }
+
+      return null;
     }
   }]);
 
@@ -1042,7 +1081,7 @@ var style = {
     margin: "0 0 2px 0"
   }
 };
-},{"preact":"node_modules/preact/dist/preact.mjs"}],"components/ascent/ascent.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.mjs","./gas-strategy":"components/ascent/gas-strategy.js"}],"components/ascent/ascent.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1053,6 +1092,8 @@ exports.default = void 0;
 var _preact = require("preact");
 
 var _result = _interopRequireDefault(require("./result"));
+
+var _gasStrategy = _interopRequireDefault(require("./gas-strategy"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1087,10 +1128,12 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ascent).call(this, props));
     _this.state = {
       maxDepth: 0,
-      cylinderBarCapacity: 200
+      cylinderBarCapacity: 200,
+      gasStrategy: _gasStrategy.default.AllAvailable
     };
     _this.onDepthChange = _this.onDepthChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onCylinderBarCapacityChange = _this.onCylinderBarCapacityChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.onGasStrategyChange = _this.onGasStrategyChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
@@ -1123,6 +1166,13 @@ function (_Component) {
       });
     }
   }, {
+    key: "onGasStrategyChange",
+    value: function onGasStrategyChange(event) {
+      this.setState({
+        gasStrategy: event.target.value
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       return (0, _preact.h)("div", {
@@ -1143,9 +1193,20 @@ function (_Component) {
         value: this.state.cylinderBarCapacity,
         placeholder: "Cylinder bar capacity?",
         onKeyUp: this.onCylinderBarCapacityChange
-      }), (0, _preact.h)(_result.default, {
+      }), (0, _preact.h)("select", {
+        style: style.select,
+        value: this.state.gasStrategy,
+        onChange: this.onGasStrategyChange
+      }, (0, _preact.h)("option", {
+        value: _gasStrategy.default.AllAvailable
+      }, _gasStrategy.default.AllAvailable), (0, _preact.h)("option", {
+        value: _gasStrategy.default.RuleOfHalf
+      }, _gasStrategy.default.RuleOfHalf), (0, _preact.h)("option", {
+        value: _gasStrategy.default.RuleOfThird
+      }, _gasStrategy.default.RuleOfThird)), (0, _preact.h)(_result.default, {
         maxDepth: this.state.maxDepth,
-        cylinderBarCapacity: this.state.cylinderBarCapacity
+        cylinderBarCapacity: this.state.cylinderBarCapacity,
+        gasStrategy: this.state.gasStrategy
       }));
     }
   }]);
@@ -1166,10 +1227,18 @@ var style = {
     fontFamily: "Arial",
     padding: "4px",
     border: "1px solid gray",
-    minWidth: "80px"
+    minWidth: "80px",
+    marginRight: "10px",
+    borderRadius: "6px"
+  },
+  select: {
+    fontSize: "18px",
+    fontFamily: "Arial",
+    border: "1px solid gray",
+    marginRight: "10px"
   }
 };
-},{"preact":"node_modules/preact/dist/preact.mjs","./result":"components/ascent/result.js"}],"index.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.mjs","./result":"components/ascent/result.js","./gas-strategy":"components/ascent/gas-strategy.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _preact = require("preact");
@@ -1245,7 +1314,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50158" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52593" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

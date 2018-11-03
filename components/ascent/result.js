@@ -1,4 +1,5 @@
 import { h, Component } from "preact";
+import GasStrategy from "./gas-strategy";
 
 export default class Result extends Component {
   constructor(props) {
@@ -60,7 +61,7 @@ export default class Result extends Component {
   }
 
   calculateMinimumGasLiters(props) {
-    const averageDepthATA = Math.ceil(props.maxDepth / 2) / 10 + 1;
+    const averageDepthATA = Math.floor(props.maxDepth / 2) / 10 + 1;
     const scr = 40; //40L/min: to accommodate conservatism, and to account for the increased breathing rate from encountering an issue on the dive.
     this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
   }
@@ -103,7 +104,7 @@ export default class Result extends Component {
   }
 
   getMinBar(cylinderLitres) {
-    const minimumBars = Math.ceil(this.litersNeeded / cylinderLitres);
+    const minimumBars = Math.floor(this.litersNeeded / cylinderLitres);
     return minimumBars > 40 ? minimumBars : 40; //Minimum Gas can NEVER be less than 40 BAR due to the possible SPG inaccuracy at the lower ranges
   }
 
@@ -159,11 +160,41 @@ export default class Result extends Component {
   }
 
   renderUsableGasText(usableGasValue) {
-    return (
-      <p style={style.text}>
-        Usable gas :<strong>{usableGasValue} BAR</strong>
-      </p>
-    );
+    if (this.props.gasStrategy === GasStrategy.AllAvailable) {
+      return (
+        <p style={style.text}>
+          Usable gas ({this.props.gasStrategy}) :
+          <strong>{usableGasValue} BAR</strong>
+        </p>
+      );
+    }
+    if (this.props.gasStrategy === GasStrategy.RuleOfHalf) {
+      const modifiedUsableGas = Math.floor(usableGasValue / 2);
+      const turnPressure = this.props.cylinderBarCapacity - modifiedUsableGas;
+      return (
+        <p style={style.text}>
+          Usable gas ({this.props.gasStrategy}) :
+          <strong>{usableGasValue} BAR</strong>
+          <br />
+          Turn pressure: {turnPressure}
+        </p>
+      );
+    }
+    if (this.props.gasStrategy === GasStrategy.RuleOfThird) {
+      const modifiedUsableGas = Math.floor(usableGasValue / 3);
+      const turnPressure = this.props.cylinderBarCapacity - modifiedUsableGas;
+      return (
+        <p style={style.text}>
+          Usable gas ({this.props.gasStrategy}) :
+          <strong>{usableGasValue} BAR</strong>
+          <br />
+          Turn pressure: {turnPressure}
+          <br />
+          Emergency gas: {modifiedUsableGas}
+        </p>
+      );
+    }
+    return null;
   }
 }
 
