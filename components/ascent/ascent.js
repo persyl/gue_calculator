@@ -1,6 +1,7 @@
 import { h, Component } from "preact";
 import Result from "./result";
 import GasStrategy from "./gas-strategy";
+import GlobalStyles from "../typography/typography";
 
 export default class Ascent extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ export default class Ascent extends Component {
     try {
       parsedInput = parseInt(event.target.value);
     } catch (e) {
-      //Ignore
+      parsedInput = 0;
     }
     this.setState({ maxDepth: parsedInput });
   }
@@ -32,7 +33,7 @@ export default class Ascent extends Component {
     try {
       parsedInput = parseInt(event.target.value);
     } catch (e) {
-      //Ignore
+      parsedInput = 0;
     }
     this.setState({ cylinderBarCapacity: parsedInput });
   }
@@ -44,12 +45,16 @@ export default class Ascent extends Component {
   render() {
     return (
       <div style={style.container}>
-        <h1>Ascent calculator - EAN32</h1>
+        <h1 style={GlobalStyles.h1}>GUE dive calculator</h1>
+        <h2 style={GlobalStyles.h2}>EAN32</h2>
+        <div style={style.warning}>
+          This tool is just meant to be used as a guideline and takes no
+          responsibility for your dive. Always make your own personal
+          calculations!
+        </div>
         <input
           style={style.input}
           type="number"
-          min="0"
-          max="40"
           value={this.state.maxDepth}
           placeholder="Max depth metres?"
           onKeyUp={this.onDepthChange}
@@ -57,8 +62,6 @@ export default class Ascent extends Component {
         <input
           style={style.input}
           type="number"
-          min="0"
-          max="300"
           value={this.state.cylinderBarCapacity}
           placeholder="Cylinder bar capacity?"
           onKeyUp={this.onCylinderBarCapacityChange}
@@ -75,15 +78,28 @@ export default class Ascent extends Component {
             {GasStrategy.RuleOfHalf}
           </option>
           <option value={GasStrategy.RuleOfThird}>
-            {GasStrategy.RuleOfThird}
+            {GasStrategy.RuleOfThird}*
           </option>
         </select>
+        {this.renderWarning()}
         <Result
           maxDepth={this.state.maxDepth}
           cylinderBarCapacity={this.state.cylinderBarCapacity}
           gasStrategy={this.state.gasStrategy}
         />
       </div>
+    );
+  }
+
+  renderWarning() {
+    return this.state.gasStrategy === GasStrategy.RuleOfThird ? (
+      <div style={style.warning}>
+        * GUE Recreational Level 1 divers should always REFRAIN from planning
+        and conducting any dive that requires using the ‘one‐third of usable gas
+        strategy
+      </div>
+    ) : (
+      ""
     );
   }
 }
@@ -100,7 +116,7 @@ const style = {
     fontFamily: "Arial",
     padding: "4px",
     border: "1px solid gray",
-    minWidth: "80px",
+    maxWidth: "48px",
     marginRight: "10px",
     borderRadius: "6px"
   },
@@ -108,6 +124,12 @@ const style = {
     fontSize: "18px",
     fontFamily: "Arial",
     border: "1px solid gray",
-    marginRight: "10px"
+    marginRight: "10px",
+    minHeight: "31px"
+  },
+  warning: {
+    ...GlobalStyles.textSmall,
+    margin: "10px 0",
+    color: "#daf260"
   }
 };
