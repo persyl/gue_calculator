@@ -1306,27 +1306,25 @@ var style = {
     marginRight: "4px",
     minHeight: "50px",
     display: "inline-flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    justifyContent: "space-between",
+    flex: 1
   }),
   label: {
     paddingBottom: "4px"
   },
-  input: {
-    fontSize: "18px",
-    fontFamily: "Arial",
+  input: _objectSpread({}, _typography.default.textSmall, {
     padding: "4px",
     border: "1px solid gray",
     maxWidth: "48px",
     marginRight: "10px",
     borderRadius: "6px"
-  },
-  select: {
-    fontSize: "18px",
-    fontFamily: "Arial",
+  }),
+  select: _objectSpread({}, _typography.default.textSmall, {
     border: "1px solid gray",
     marginRight: "10px",
     minHeight: "31px"
-  },
+  }),
   warning: _objectSpread({}, _typography.default.textSmall, {
     margin: "10px 0",
     color: "#daf260"
@@ -1408,7 +1406,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50371" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56176" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

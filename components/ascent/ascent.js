@@ -161,14 +161,15 @@ const style = {
     marginRight: "4px",
     minHeight: "50px",
     display: "inline-flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    justifyContent: "space-between",
+    flex: 1
   },
   label: {
     paddingBottom: "4px"
   },
   input: {
-    fontSize: "18px",
-    fontFamily: "Arial",
+    ...GlobalStyles.textSmall,
     padding: "4px",
     border: "1px solid gray",
     maxWidth: "48px",
@@ -176,8 +177,7 @@ const style = {
     borderRadius: "6px"
   },
   select: {
-    fontSize: "18px",
-    fontFamily: "Arial",
+    ...GlobalStyles.textSmall,
     border: "1px solid gray",
     marginRight: "10px",
     minHeight: "31px"
