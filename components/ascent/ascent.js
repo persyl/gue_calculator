@@ -62,35 +62,57 @@ export default class Ascent extends Component {
           responsibility for your dive. Always make your own personal
           calculations!
         </div>
-        <input
-          style={style.input}
-          type="number"
-          value={this.state.maxDepth}
-          placeholder="Max depth metres?"
-          onKeyUp={this.onDepthChange}
-        />
-        <input
-          style={style.input}
-          type="number"
-          value={this.state.cylinderBarCapacity}
-          placeholder="Cylinder bar capacity?"
-          onKeyUp={this.onCylinderBarCapacityChange}
-        />
-        <select
-          style={style.select}
-          value={this.state.gasStrategy}
-          onChange={this.onGasStrategyChange}
-        >
-          <option value={GasStrategy.AllAvailable}>
-            {GasStrategy.AllAvailable}
-          </option>
-          <option value={GasStrategy.RuleOfHalf}>
-            {GasStrategy.RuleOfHalf}
-          </option>
-          <option value={GasStrategy.RuleOfThird}>
-            {GasStrategy.RuleOfThird}*
-          </option>
-        </select>
+
+        <section style={style.fields}>
+          <div style={style.inputContainer}>
+            <label style={style.label} for="maxdepth">
+              Max depth:
+            </label>
+            <input
+              id="maxdepth"
+              style={style.input}
+              type="number"
+              value={this.state.maxDepth}
+              onKeyUp={this.onDepthChange}
+            />
+          </div>
+
+          <div style={style.inputContainer}>
+            <label style={style.label} for="capacity">
+              Cylinder bar capacity:
+            </label>
+            <input
+              id="capacity"
+              style={style.input}
+              type="number"
+              value={this.state.cylinderBarCapacity}
+              onKeyUp={this.onCylinderBarCapacityChange}
+            />
+          </div>
+
+          <div style={style.inputContainer}>
+            <label style={style.label} for="strategy">
+              Gas strategy:
+            </label>
+            <select
+              id="strategy"
+              style={style.select}
+              value={this.state.gasStrategy}
+              onChange={this.onGasStrategyChange}
+            >
+              <option value={GasStrategy.AllAvailable}>
+                {GasStrategy.AllAvailable}
+              </option>
+              <option value={GasStrategy.RuleOfHalf}>
+                {GasStrategy.RuleOfHalf}
+              </option>
+              <option value={GasStrategy.RuleOfThird}>
+                {GasStrategy.RuleOfThird}*
+              </option>
+            </select>
+          </div>
+        </section>
+
         {this.renderWarning()}
         <Result
           maxDepth={this.state.maxDepth}
@@ -126,6 +148,23 @@ const style = {
     color: "white",
     padding: "10px",
     borderRadius: "10px"
+  },
+  fields: {
+    display: "flex",
+    justifyContent: "space-between"
+  },
+  inputContainer: {
+    ...GlobalStyles.textSmall,
+    border: "1px dotted white",
+    borderRadius: "10px",
+    padding: "4px",
+    marginRight: "4px",
+    minHeight: "50px",
+    display: "inline-flex",
+    flexDirection: "column"
+  },
+  label: {
+    paddingBottom: "4px"
   },
   input: {
     fontSize: "18px",

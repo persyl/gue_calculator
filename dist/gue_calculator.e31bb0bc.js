@@ -1224,19 +1224,37 @@ function (_Component) {
         style: _typography.default.h2
       }, "EAN", this.gasMix * 100), (0, _preact.h)("div", {
         style: style.warning
-      }, "This tool is just meant to be used as a guideline and takes no responsibility for your dive. Always make your own personal calculations!"), (0, _preact.h)("input", {
+      }, "This tool is just meant to be used as a guideline and takes no responsibility for your dive. Always make your own personal calculations!"), (0, _preact.h)("section", {
+        style: style.fields
+      }, (0, _preact.h)("div", {
+        style: style.inputContainer
+      }, (0, _preact.h)("label", {
+        style: style.label,
+        for: "maxdepth"
+      }, "Max depth:"), (0, _preact.h)("input", {
+        id: "maxdepth",
         style: style.input,
         type: "number",
         value: this.state.maxDepth,
-        placeholder: "Max depth metres?",
         onKeyUp: this.onDepthChange
-      }), (0, _preact.h)("input", {
+      })), (0, _preact.h)("div", {
+        style: style.inputContainer
+      }, (0, _preact.h)("label", {
+        style: style.label,
+        for: "capacity"
+      }, "Cylinder bar capacity:"), (0, _preact.h)("input", {
+        id: "capacity",
         style: style.input,
         type: "number",
         value: this.state.cylinderBarCapacity,
-        placeholder: "Cylinder bar capacity?",
         onKeyUp: this.onCylinderBarCapacityChange
-      }), (0, _preact.h)("select", {
+      })), (0, _preact.h)("div", {
+        style: style.inputContainer
+      }, (0, _preact.h)("label", {
+        style: style.label,
+        for: "strategy"
+      }, "Gas strategy:"), (0, _preact.h)("select", {
+        id: "strategy",
         style: style.select,
         value: this.state.gasStrategy,
         onChange: this.onGasStrategyChange
@@ -1246,7 +1264,7 @@ function (_Component) {
         value: _gasStrategy.default.RuleOfHalf
       }, _gasStrategy.default.RuleOfHalf), (0, _preact.h)("option", {
         value: _gasStrategy.default.RuleOfThird
-      }, _gasStrategy.default.RuleOfThird, "*")), this.renderWarning(), (0, _preact.h)(_result.default, {
+      }, _gasStrategy.default.RuleOfThird, "*")))), this.renderWarning(), (0, _preact.h)(_result.default, {
         maxDepth: this.state.maxDepth,
         tooDeep: this.state.tooDeep,
         cylinderBarCapacity: this.state.cylinderBarCapacity,
@@ -1260,7 +1278,7 @@ function (_Component) {
       var depthWarning = this.state.maxDepth >= this.allowedMaxDepth ? (0, _preact.h)("strong", null, depthWarningText) : null;
       return this.state.gasStrategy === _gasStrategy.default.RuleOfThird ? (0, _preact.h)("div", {
         style: style.warning
-      }, depthWarning, "* GUE Recreational Level 1 divers should always REFRAIN from planning and conducting any dive that requires using the \u2018one\u2010third of usable gas strategy") : (0, _preact.h)("div", {
+      }, depthWarning, "* GUE Recreational Level 1 divers should always REFRAIN from planning and conducting any dive that requires using the one\u2010third of usable gas strategy") : (0, _preact.h)("div", {
         style: style.warning
       }, depthWarning);
     }
@@ -1276,6 +1294,22 @@ var style = {
     color: "white",
     padding: "10px",
     borderRadius: "10px"
+  },
+  fields: {
+    display: "flex",
+    justifyContent: "space-between"
+  },
+  inputContainer: _objectSpread({}, _typography.default.textSmall, {
+    border: "1px dotted white",
+    borderRadius: "10px",
+    padding: "4px",
+    marginRight: "4px",
+    minHeight: "50px",
+    display: "inline-flex",
+    flexDirection: "column"
+  }),
+  label: {
+    paddingBottom: "4px"
   },
   input: {
     fontSize: "18px",
@@ -1374,7 +1408,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56213" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50371" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
