@@ -19,10 +19,10 @@
   },
   "homepage": "https://github.com/persyl/gue_calculator#readme",
   "devDependencies": {
-    "gh-pages": "^2.0.1",
-    "parcel-bundler": "^1.10.3"
+    "gh-pages": "^2.1.1",
+    "parcel-bundler": "^1.12.3"
   },
   "dependencies": {
-    "preact": "^8.3.1"
+    "preact": "^8.5.2"
   }
 }
