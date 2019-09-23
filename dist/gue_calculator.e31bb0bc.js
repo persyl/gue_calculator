@@ -1027,7 +1027,7 @@ function (_Component) {
   }, {
     key: "calculateMinimumGasLiters",
     value: function calculateMinimumGasLiters(props) {
-      var averageDepthATA = Math.floor(props.maxDepth / 2) / 10 + 1;
+      var averageDepthATA = Math.ceil(props.maxDepth / 2) / 10 + 1;
       this.litersNeeded = this.totalAscentTime * this.breathingRate * averageDepthATA;
     }
   }, {
@@ -1086,9 +1086,9 @@ function (_Component) {
         style: style.container
       }, (0, _preact.h)("p", {
         style: _typography.default.text
-      }, "Ascent time from\xA0", (0, _preact.h)("strong", null, this.props.maxDepth, "m = ", this.totalAscentTime, " minutes")), (0, _preact.h)("p", {
+      }, "Ascent time from\xA0", (0, _preact.h)("strong", null, this.props.maxDepth, "m = ", this.totalAscentTime, " minutes"), " (calculated for 2 divers inc. ", this.minutesToHandleProblems, "min extra to handle problems)"), (0, _preact.h)("p", {
         style: _typography.default.text
-      }, (0, _preact.h)("strong", null, this.litersNeeded, " L"), " minimum gas needed (for 2 divers), breathing rate ", this.breathingRate, "L/min"), (0, _preact.h)("h2", {
+      }, (0, _preact.h)("strong", null, this.litersNeeded, " L"), " minimum gas needed (enough for 2 divers), stressed breathing rate ", this.breathingRate, "L/min"), (0, _preact.h)("h2", {
         style: _typography.default.h2
       }, "Double 12L cylinders:"), this.renderMinGasText(this.minimumBarNeeded.d12.minBar), this.renderUsableGasText(this.minimumBarNeeded.d12.usableGas), (0, _preact.h)("h2", {
         style: _typography.default.h2
@@ -1451,7 +1451,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63600" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63693" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
