@@ -63,7 +63,7 @@ export default class Result extends Component {
   }
 
   calculateMinimumGasLiters(props) {
-    const averageDepthATA = Math.floor(props.maxDepth / 2) / 10 + 1;
+    const averageDepthATA = Math.ceil(props.maxDepth / 2) / 10 + 1;
     this.litersNeeded = this.totalAscentTime * this.breathingRate * averageDepthATA;
   }
 
@@ -129,10 +129,10 @@ export default class Result extends Component {
           Ascent time from&nbsp;
           <strong>
             {this.props.maxDepth}m = {this.totalAscentTime} minutes
-          </strong>
+          </strong> (calculated for 2 divers inc. {this.minutesToHandleProblems}min extra to handle problems)
         </p>
         <p style={GlobalStyles.text}>
-          <strong>{this.litersNeeded} L</strong> minimum gas needed (for 2 divers), breathing rate {this.breathingRate}L/min
+          <strong>{this.litersNeeded} L</strong> minimum gas needed (enough for 2 divers), stressed breathing rate {this.breathingRate}L/min
         </p>
         <h2 style={GlobalStyles.h2}>Double 12L cylinders:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.d12.minBar)}
