@@ -5,6 +5,8 @@ import GlobalStyles from "../typography/typography";
 export default class Result extends Component {
   constructor(props) {
     super(props);
+    this.breathingRate = 40; //40L/min: to accommodate conservatism, and to account for the increased breathing rate from encountering an issue on the dive.
+    this.minutesToHandleProblems = 1
     this.totalAscentTime = 0;
     this.litersNeeded = 0;
     this.amountOfDivers = 2; //Always count total time for 2 divers
@@ -27,22 +29,21 @@ export default class Result extends Component {
 
   calculateAscentTime(props) {
     const { maxDepth } = props;
-    const minutesToHandleProblems = 1;
     if (maxDepth <= 3) {
       this.totalAscentTime =
-        (minutesToHandleProblems + 1) * this.amountOfDivers;
+        (this.minutesToHandleProblems + 1) * this.amountOfDivers;
       return;
     }
 
     if (maxDepth <= 6) {
       this.totalAscentTime =
-        (minutesToHandleProblems + 2) * this.amountOfDivers;
+        (this.minutesToHandleProblems + 2) * this.amountOfDivers;
       return;
     }
 
     if (maxDepth <= 12) {
       this.totalAscentTime =
-        (minutesToHandleProblems + 3) * this.amountOfDivers;
+        (this.minutesToHandleProblems + 3) * this.amountOfDivers;
       return;
     }
 
@@ -56,15 +57,14 @@ export default class Result extends Component {
       const metresUpTo15 = maxDepth - 15;
       const timeTo15 = Math.ceil(metresUpTo15 / 9); // 9metres / min up to 15m level
       this.totalAscentTime =
-        (minutesToHandleProblems + timeTo15 + 4) * this.amountOfDivers; //4min extra for 15m-12m, 12m-6m, 6m-3m, 3m-surface
+        (this.minutesToHandleProblems + timeTo15 + 4) * this.amountOfDivers; //4min extra for 15m-12m, 12m-6m, 6m-3m, 3m-surface
       return;
     }
   }
 
   calculateMinimumGasLiters(props) {
     const averageDepthATA = Math.floor(props.maxDepth / 2) / 10 + 1;
-    const scr = 40; //40L/min: to accommodate conservatism, and to account for the increased breathing rate from encountering an issue on the dive.
-    this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
+    this.litersNeeded = this.totalAscentTime * this.breathingRate * averageDepthATA;
   }
 
   calculateGas(props) {
@@ -132,7 +132,7 @@ export default class Result extends Component {
           </strong>
         </p>
         <p style={GlobalStyles.text}>
-          <strong>{this.litersNeeded} L</strong> minimum gas needed.
+          <strong>{this.litersNeeded} L</strong> minimum gas needed (for 2 divers), breathing rate {this.breathingRate}L/min
         </p>
         <h2 style={GlobalStyles.h2}>Double 12L cylinders:</h2>
         {this.renderMinGasText(this.minimumBarNeeded.d12.minBar)}
