@@ -961,6 +961,9 @@ function (_Component) {
     _classCallCheck(this, Result);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Result).call(this, props));
+    _this.breathingRate = 40; //40L/min: to accommodate conservatism, and to account for the increased breathing rate from encountering an issue on the dive.
+
+    _this.minutesToHandleProblems = 1;
     _this.totalAscentTime = 0;
     _this.litersNeeded = 0;
     _this.amountOfDivers = 2; //Always count total time for 2 divers
@@ -991,20 +994,19 @@ function (_Component) {
     key: "calculateAscentTime",
     value: function calculateAscentTime(props) {
       var maxDepth = props.maxDepth;
-      var minutesToHandleProblems = 1;
 
       if (maxDepth <= 3) {
-        this.totalAscentTime = (minutesToHandleProblems + 1) * this.amountOfDivers;
+        this.totalAscentTime = (this.minutesToHandleProblems + 1) * this.amountOfDivers;
         return;
       }
 
       if (maxDepth <= 6) {
-        this.totalAscentTime = (minutesToHandleProblems + 2) * this.amountOfDivers;
+        this.totalAscentTime = (this.minutesToHandleProblems + 2) * this.amountOfDivers;
         return;
       }
 
       if (maxDepth <= 12) {
-        this.totalAscentTime = (minutesToHandleProblems + 3) * this.amountOfDivers;
+        this.totalAscentTime = (this.minutesToHandleProblems + 3) * this.amountOfDivers;
         return;
       }
 
@@ -1017,7 +1019,7 @@ function (_Component) {
         var metresUpTo15 = maxDepth - 15;
         var timeTo15 = Math.ceil(metresUpTo15 / 9); // 9metres / min up to 15m level
 
-        this.totalAscentTime = (minutesToHandleProblems + timeTo15 + 4) * this.amountOfDivers; //4min extra for 15m-12m, 12m-6m, 6m-3m, 3m-surface
+        this.totalAscentTime = (this.minutesToHandleProblems + timeTo15 + 4) * this.amountOfDivers; //4min extra for 15m-12m, 12m-6m, 6m-3m, 3m-surface
 
         return;
       }
@@ -1026,9 +1028,7 @@ function (_Component) {
     key: "calculateMinimumGasLiters",
     value: function calculateMinimumGasLiters(props) {
       var averageDepthATA = Math.floor(props.maxDepth / 2) / 10 + 1;
-      var scr = 40; //40L/min: to accommodate conservatism, and to account for the increased breathing rate from encountering an issue on the dive.
-
-      this.litersNeeded = this.totalAscentTime * scr * averageDepthATA;
+      this.litersNeeded = this.totalAscentTime * this.breathingRate * averageDepthATA;
     }
   }, {
     key: "calculateGas",
@@ -1088,7 +1088,7 @@ function (_Component) {
         style: _typography.default.text
       }, "Ascent time from\xA0", (0, _preact.h)("strong", null, this.props.maxDepth, "m = ", this.totalAscentTime, " minutes")), (0, _preact.h)("p", {
         style: _typography.default.text
-      }, (0, _preact.h)("strong", null, this.litersNeeded, " L"), " minimum gas needed."), (0, _preact.h)("h2", {
+      }, (0, _preact.h)("strong", null, this.litersNeeded, " L"), " minimum gas needed (for 2 divers), breathing rate ", this.breathingRate, "L/min"), (0, _preact.h)("h2", {
         style: _typography.default.h2
       }, "Double 12L cylinders:"), this.renderMinGasText(this.minimumBarNeeded.d12.minBar), this.renderUsableGasText(this.minimumBarNeeded.d12.usableGas), (0, _preact.h)("h2", {
         style: _typography.default.h2
@@ -1451,7 +1451,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63537" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63600" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
