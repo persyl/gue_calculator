@@ -49,7 +49,7 @@ export default class Result extends Component {
 
     if (maxDepth <= 15) {
       this.totalAscentTime =
-        (minutesToHandleProblems + 4) * this.amountOfDivers;
+        (this.minutesToHandleProblems + 4) * this.amountOfDivers;
       return;
     }
 
